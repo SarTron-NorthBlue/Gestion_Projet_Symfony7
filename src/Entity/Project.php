@@ -34,9 +34,23 @@ class Project
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Project')]
     private Collection $users;
 
+    /**
+     * @var Collection<int, user>
+     */
+    #[ORM\ManyToMany(targetEntity: user::class, inversedBy: 'projects')]
+    private Collection $user;
+
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project')]
+    private Collection $task;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->user = new ArrayCollection();
+        $this->task = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -114,6 +128,44 @@ class Project
     {
         if ($this->users->removeElement($user)) {
             $user->removeProject($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, user>
+     */
+    public function getUser(): Collection
+    {
+        return $this->user;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTask(): Collection
+    {
+        return $this->task;
+    }
+
+    public function addTask(Task $task): static
+    {
+        if (!$this->task->contains($task)) {
+            $this->task->add($task);
+            $task->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): static
+    {
+        if ($this->task->removeElement($task)) {
+            // set the owning side to null (unless already changed)
+            if ($task->getProject() === $this) {
+                $task->setProject(null);
+            }
         }
 
         return $this;
