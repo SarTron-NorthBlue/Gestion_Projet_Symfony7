@@ -30,6 +30,9 @@ class Task
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dueDate = null;
 
+    #[ORM\ManyToOne(inversedBy: 'task')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +94,18 @@ class Task
     public function setDueDate(\DateTimeInterface $dueDate): static
     {
         $this->dueDate = $dueDate;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +34,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, Project>
+     */
+    #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'users')]
+    private Collection $Project;
+
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'user')]
+    private Collection $task;
+
+    public function __construct()
+    {
+        $this->Project = new ArrayCollection();
+        $this->task = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,5 +125,59 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    public function getProject(): Collection
+    {
+        return $this->Project;
+    }
+
+    public function addProject(Project $project): static
+    {
+        if (!$this->Project->contains($project)) {
+            $this->Project->add($project);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Project $project): static
+    {
+        $this->Project->removeElement($project);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTask(): Collection
+    {
+        return $this->task;
+    }
+
+    public function addTask(Task $task): static
+    {
+        if (!$this->task->contains($task)) {
+            $this->task->add($task);
+            $task->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): static
+    {
+        if ($this->task->removeElement($task)) {
+            // set the owning side to null (unless already changed)
+            if ($task->getUser() === $this) {
+                $task->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
