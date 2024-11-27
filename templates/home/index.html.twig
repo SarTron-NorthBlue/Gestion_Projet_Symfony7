@@ -9,12 +9,24 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! {{ app.user.email }} ✅</h1>
+    <h1>Hello {{ controller_name }}! ✅</h1>
+    <p>Bonjour, {{ app.user.email }}</p>
 
-    This friendly message is coming from:
+    {% if is_granted('ROLE_ADMIN') %}
+        <h2>Bienvenue, Administrateur</h2>
+        <p>Vous avez accès à toutes les fonctionnalités.</p>
+    {% elseif is_granted('ROLE_USER') %}
+        <h2>Bienvenue, Utilisateur</h2>
+        <p>Voici votre tableau de bord. Certaines fonctionnalités sont restreintes.</p>
+    {% else %}
+        <h2>Accès restreint</h2>
+        <p>Vous n'avez pas les permissions nécessaires pour accéder à cette page.</p>
+    {% endif %}
+
+    <p>Cette page vient de :</p>
     <ul>
-        <li>Your controller at <code>C:/Users/Lou/Desktop/Cour expernet/gestion_de_projet/gestion_projet/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>C:/Users/Lou/Desktop/Cour expernet/gestion_de_projet/gestion_projet/templates/home/index.html.twig</code></li>
+        <li>Votre contrôleur à <code>C:/Users/Lou/Desktop/Cour expernet/gestion_de_projet/gestion_projet/src/Controller/HomeController.php</code></li>
+        <li>Votre template à <code>C:/Users/Lou/Desktop/Cour expernet/gestion_de_projet/gestion_projet/templates/home/index.html.twig</code></li>
     </ul>
 </div>
 {% endblock %}
