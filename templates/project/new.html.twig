@@ -1,11 +1,22 @@
+{# new.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}New Project{% endblock %}
+{% block title %}Créer un Nouveau Projet{% endblock %}
 
 {% block body %}
-    <h1>Create new Project</h1>
-
-    {{ include('project/_form.html.twig') }}
-
-    <a href="{{ path('app_project_index') }}">back to list</a>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-plus me-2"></i>Créer un Nouveau Projet</h4>
+                <a href="{{ path('app_project_index') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-list me-1"></i>Liste des Projets
+                </a>
+            </div>
+            <div class="card-body">
+                {{ include('project/_form.html.twig', {'button_label': 'Créer'}) }}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
