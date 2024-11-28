@@ -77,4 +77,13 @@ final class UserController extends AbstractController{
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/access-denied', name: 'access_denied')]
+    public function accessDenied(): Response
+    {
+        return $this->render('error/access_denied.html.twig', [
+            'message' => 'Vous n\'avez pas les permissions nécessaires pour accéder à cette page.',
+        ]);
+    }
+
 }
