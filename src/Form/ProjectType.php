@@ -22,8 +22,8 @@ class ProjectType extends AbstractType
             ->add('daedline', null, [
                 'widget' => 'single_text'
             ])
-            ->add('user', EntityType::class, [
-                'class' => user::class,
+            ->add('users', EntityType::class, [
+                'class' => User::class,
 'choice_label' => 'email',
 'multiple' => true,
             ])

@@ -22,6 +22,7 @@
                                 <th scope="col">#ID</th>
                                 <th scope="col">Nom</th>
                                 <th scope="col">Description</th>
+                                <th scope="col">Utilisateur</th>
                                 <th scope="col">Créé le</th>
                                 <th scope="col">Date Limite</th>
                                 <th scope="col">Actions</th>
@@ -33,6 +34,11 @@
                                     <th scope="row">{{ project.id }}</th>
                                     <td>{{ project.name }}</td>
                                     <td>{{ project.description }}</td>
+                                    <td> <ul> {% for user in project.users %} <li> 
+                                    {{user.email}}
+                                    </li> 
+                                    {% endfor %} </ul>
+                                    </td>
                                     <td>{{ project.createdAt ? project.createdAt|date('d/m/Y H:i') : 'N/A' }}</td>
                                     <td>{{ project.daedline ? project.daedline|date('d/m/Y') : 'N/A' }}</td>
                                     <td>

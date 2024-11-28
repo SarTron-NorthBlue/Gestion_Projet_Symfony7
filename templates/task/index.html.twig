@@ -23,6 +23,7 @@
                                 <th scope="col">Titre</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Statut</th>
+                                <th scope="col">Utilisateur</th>
                                 <th scope="col">Créé le</th>
                                 <th scope="col">Date d'Échéance</th>
                                 <th scope="col">Actions</th>
@@ -35,6 +36,7 @@
                                     <td>{{ task.title }}</td>
                                     <td>{{ task.description }}</td>
                                     <td>{{ task.status.value }}</td>
+                                    <td>{{ task.user.email }}</td>
                                     <td>{{ task.createAt ? task.createAt|date('d/m/Y H:i') : 'N/A' }}</td>
                                     <td>{{ task.dueDate ? task.dueDate|date('d/m/Y') : 'N/A' }}</td>
                                     <td>

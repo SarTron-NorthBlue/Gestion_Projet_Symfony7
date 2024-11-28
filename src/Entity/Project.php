@@ -31,14 +31,8 @@ class Project
     /**
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'Project')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'projects')]
     private Collection $users;
-
-    /**
-     * @var Collection<int, user>
-     */
-    #[ORM\ManyToMany(targetEntity: user::class, inversedBy: 'projects')]
-    private Collection $user;
 
     /**
      * @var Collection<int, Task>
@@ -49,7 +43,6 @@ class Project
     public function __construct()
     {
         $this->users = new ArrayCollection();
-        $this->user = new ArrayCollection();
         $this->task = new ArrayCollection();
     }
 
@@ -133,13 +126,6 @@ class Project
         return $this;
     }
 
-    /**
-     * @return Collection<int, user>
-     */
-    public function getUser(): Collection
-    {
-        return $this->user;
-    }
 
     /**
      * @return Collection<int, Task>

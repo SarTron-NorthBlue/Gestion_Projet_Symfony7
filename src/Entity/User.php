@@ -36,12 +36,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     /**
-     * @var Collection<int, Project>
-     */
-    #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'users')]
-    private Collection $Project;
-
-    /**
      * @var Collection<int, Task>
      */
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'user')]
@@ -50,12 +44,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Project>
      */
-    #[ORM\ManyToMany(targetEntity: Project::class, mappedBy: 'user')]
+    #[ORM\ManyToMany(targetEntity: Project::class, mappedBy: 'users')]
     private Collection $projects;
 
     public function __construct()
     {
-        $this->Project = new ArrayCollection();
         $this->task = new ArrayCollection();
         $this->projects = new ArrayCollection();
     }
@@ -134,18 +127,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection<int, Project>
-     */
-    public function getProject(): Collection
-    {
-        return $this->Project;
-    }
 
     public function addProject(Project $project): static
     {
-        if (!$this->Project->contains($project)) {
-            $this->Project->add($project);
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
         }
 
         return $this;
@@ -153,7 +139,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeProject(Project $project): static
     {
-        $this->Project->removeElement($project);
+        $this->projects->removeElement($project);
 
         return $this;
     }
