@@ -26,6 +26,7 @@ class ProjectType extends AbstractType
                 'class' => User::class,
 'choice_label' => 'email',
 'multiple' => true,
+'expanded' => true,
             ])
         ;
     }
