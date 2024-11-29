@@ -6,10 +6,11 @@ use App\Entity\Project;
 use App\Form\ProjectType;
 use App\Repository\ProjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/project')]
 final class ProjectController extends AbstractController{
@@ -77,4 +78,35 @@ final class ProjectController extends AbstractController{
 
         return $this->redirectToRoute('app_project_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/project/search', name: 'app_project_search')]
+public function search(Request $request, ProjectRepository $projectRepository): JsonResponse
+{
+    $query = $request->query->get('q', '');
+
+    // Recherche des projets par le nom
+    $projects = $projectRepository->createQueryBuilder('p')
+        ->leftJoin('p.users', 'u')
+        ->addSelect('u')
+        ->where('p.name LIKE :query')
+        ->setParameter('query', '%' . $query . '%')
+        ->getQuery()
+        ->getResult();
+
+    // Formatage des données pour JSON
+    $data = [];
+    foreach ($projects as $project) {
+        $data[] = [
+            'id' => $project->getId(),
+            'name' => $project->getName(),
+            'description' => $project->getDescription(),
+            'users' => array_map(fn($user) => $user->getEmail(), $project->getUsers()->toArray()),
+            'created_at' => $project->getCreatedAt() ? $project->getCreatedAt()->format('d/m/Y H:i') : null,
+            'deadline' => $project->getDaedline() ? $project->getDaedline()->format('d/m/Y') : null,
+        ];
+    }
+
+    return new JsonResponse($data);
+}
+
 }
