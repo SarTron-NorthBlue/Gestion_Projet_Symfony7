@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 
 #[Route('/user')]
 final class UserController extends AbstractController{
@@ -85,5 +87,33 @@ final class UserController extends AbstractController{
             'message' => 'Vous n\'avez pas les permissions nécessaires pour accéder à cette page.',
         ]);
     }
+
+
+    #[Route('/user/search', name: 'app_user_search')]
+public function search(Request $request, UserRepository $userRepository): JsonResponse
+{
+    $query = $request->query->get('q', '');
+
+    // Recherche des utilisateurs par email
+    $users = $userRepository->createQueryBuilder('u')
+        ->where('u.email LIKE :query')
+        ->setParameter('query', '%' . $query . '%')
+        ->getQuery()
+        ->getResult();
+
+    // Formatage des données pour JSON
+    $data = [];
+    foreach ($users as $user) {
+        $data[] = [
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
+            'password' => $user->getPassword(),
+        ];
+    }
+
+    return new JsonResponse($data);
+}
+
 
 }
