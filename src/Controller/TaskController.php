@@ -6,10 +6,11 @@ use App\Entity\Task;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/task')]
 final class TaskController extends AbstractController{
@@ -77,4 +78,39 @@ final class TaskController extends AbstractController{
 
         return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/task/search', name: 'app_task_search')]
+public function search(Request $request, TaskRepository $taskRepository): JsonResponse
+{
+    $query = $request->query->get('q', '');
+
+    // Rechercher les tâches par le titre
+    $tasks = $taskRepository->createQueryBuilder('t')
+        ->leftJoin('t.project', 'p')
+        ->addSelect('p')
+        ->where('t.title LIKE :query')
+        ->setParameter('query', '%' . $query . '%')
+        ->getQuery()
+        ->getResult();
+
+    // Formatage des données pour JSON
+    $data = [];
+    foreach ($tasks as $task) {
+        $data[] = [
+            'id' => $task->getId(),
+            'title' => $task->getTitle(),
+            'description' => $task->getDescription(),
+            'status' => $task->getStatus()->value,
+            'user_email' => $task->getUser() ? $task->getUser()->getEmail() : 'Aucun utilisateur',
+            'project_name' => $task->getProject() ? $task->getProject()->getName() : null,
+            'create_at' => $task->getCreateAt() ? $task->getCreateAt()->format('d/m/Y H:i') : null,
+            'due_date' => $task->getDueDate() ? $task->getDueDate()->format('d/m/Y') : null,
+        ];
+    }
+
+    return new JsonResponse($data);
+}
+
+
+
 }
